@@ -1,0 +1,10 @@
+hi
+tell me about your recent projects
+machine Learning
+What have you done in machine Learning?
+What have you done in finance?
+finance
+cloud computing
+What have you done in cloud computing?
+blockchain
+What have you done in blockchain?
