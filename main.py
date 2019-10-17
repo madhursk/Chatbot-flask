@@ -83,11 +83,13 @@ def subdomain():
 # 			n_count=n_count+1
 
 def process():
+	# return render_template('index.html',bot_response="Tell me about your recent project")
 	dict3 = ['paper', 'project', 'data', 'nothing', 'no', 'I', 'major', 'analysis', 'use', 'learning']
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
 
 	ans = request.form['user_input']
+	uid = request.form['uid']
 
 	
 	qtns1 = "Tell me about your recent project"
@@ -127,7 +129,7 @@ def process():
 	
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("INSERT INTO domain_extraction (question, answer, keyword) VALUES (?,?,?)",(qtns1,ans,kw))
+	cursorObj.execute("INSERT INTO domain_extraction (question, answer, keyword, user_id) VALUES (?,?,?,?)",(qtns1,ans,kw, uid))
 	con.commit()
 	cursorObj.close()
 
@@ -135,7 +137,7 @@ def process():
 	imp_keywords = []
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT keyword from domain_extraction")
+	cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
 	rows1 = cursorObj.fetchall()
 	cursorObj.close()
 	print("printing rowss")
@@ -162,7 +164,7 @@ def process():
 	print(final_imp_keywords)
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT COUNT(uid) FROM domain_extraction")
+	cursorObj.execute("SELECT COUNT(uid) FROM domain_extraction where user_id=\""+uid+"\"")
 	key_count = cursorObj.fetchall()
 	print("keycountzzz")
 	value_count = int(key_count[0][0])
@@ -174,7 +176,7 @@ def process():
 	qtn = qtn + final_imp_keywords[value_count-1] 
 
 
-	return render_template('index.html',user_input=ans,bot_response=qtn)
+	return render_template('index.html',user_input=ans,bot_response=qtn,uid=uid)
 
 	
 
