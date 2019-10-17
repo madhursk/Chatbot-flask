@@ -14,7 +14,7 @@ User: {{user_input}}
 </div> -->
 <div class="alert alert-primary" role="alert">
   <!-- Friend: {{bot_response}} -->
-  Friend: 
+  Friend:
   <script>
      var text = '{{ bot_response }}';
      var uid = '';
@@ -28,7 +28,7 @@ User: {{user_input}}
   </script>
   <!-- <input placeholder="Tell me something about your project" disabled>{{bot_response}}</input> -->
 </div>
-	
+
 
 	<form  action="/process" method="POST">
   <div class="form-group">
@@ -37,14 +37,20 @@ User: {{user_input}}
     <input type="text" name="user_input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Talk to my friend"><br>
   <button type="submit" class="btn btn-primary">Send</button>
   <p id="uid_demo"></p>
-  
+
 
 </form>
 </div>
 
-
+<script>
+document.getElementById("uid").innerHTML = {{uid}};
+</script>
 <form action="/subdomain" method="post">
   <button name="forwardBtn" type="submit">Search for subdomain</button>
+</form>
+
+<form action="/applications" method="post">
+  <button name="forwardBtn" type="submit">Search for applications</button>
 </form> 
 
 

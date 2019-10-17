@@ -5,14 +5,17 @@
 </head>
 <body>
 <h1 align="center">User Subdomains Identification</h1>
+
 <script>
     var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
-    document.write("<form onsubmit=\"return false\" method=\"get\">");
 </script>
+
+<form onsubmit="return false" method="POST" action="/subdomain">
 <table align="center" width="100%" border="0">
+
 <script>
     for (x of domains) {
-        var count = 0;  
+        var count = 0;
         document.write("<tr>")
             for(y of x)
             {
@@ -31,6 +34,15 @@
 
 
     document.write("</table>")
+    </script>
+
+
+    <input type='text' name = 'sub_domains_user' id='id1' > 
+    <!--
+<input type='text' name = 'uid' id='uid1' />
+    -->
+
+    <script>
     //<button onclick="myFunction()">Click me</button>
     //document.write("<input type=\"submit\" value=\"Submit\">");
     document.write("<br>" + "<br><p align=\"center\">")
@@ -41,7 +53,7 @@
     function submitform()
         {
         console.log("In submit form");
-        console.log(domains);
+        //console.log(domains);
         var domain_final = [];
         for (x of domains)
         {
@@ -66,11 +78,28 @@
                 }
             domain_final.push(sub_domain);
     }
-    
+
     console.log(domain_final);
+    document.getElementById("id1").value =domain_final;
     }
 
 
 </script>
+
+
+
+<!--
+<form  action="/process" method="POST">
+  <div class="form-group">
+    User Name : <input type="text" name="uid" id = "uid" class="form-control" placeholder="{{uid}}"><br>
+    <label for="exampleInputEmail1">Friend Chatbot</label>
+    <input type="text" name="user_input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Talk to my friend"><br>
+  <button type="submit" class="btn btn-primary">Send</button>
+  <p id="uid_demo"></p>
+  -->
+
+
+</form>
+</p>
 </body>
 </html>

@@ -62,10 +62,95 @@ def index():
 	return render_template('index.html')
 
 
-@app.route('/subdomain', methods=["GET", "POST"])
-def subdomain():
-	return render_template('subdomain.html')
 
+@app.route('/applications',methods=['POST'])
+def applications():
+	applications = request.form['user_applications']
+	print("----------------------Applications-------------------------------")
+	print(applications)
+	return render_template('applicat.html')
+
+
+
+
+
+@app.route('/subdomain', methods=['POST','GET'])
+def subdomain():
+
+	if request.method == 'POST':
+		Dict = {'MachineLearning': ['LinearRegression','LogisticRegression','KNN','SupervisedLearning','UnSupervisedLearning','NaiveBayes'],
+		'ArtificialIntelligence': ['KnowledgeReasoning', 'Planning', 'MachineLearning','NaturalLanguageProcessing', 'ComputerVision', 'Robotics', 'ArtificialGeneralIntelligence'],
+		'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','SupervisedLearning','NeuralNetworks','AnomalyDetection'],
+		'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
+		'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
+		'CloudComputing': ['InfrastructureAsAService','PlatformAsAService','SoftwareAsAService','FunctionAsAService','DistributedCloud','BigData'],
+		'BigData': ['Hadoop','Hive','Pig','Spark','CloudComputing','MapAndReduce'],
+		'DataAnalytics': ['Hadoop','MapAndReduce','DataCleaning','DataProcessing','DataCollection','DataVisualtization'],
+		'InternetOfThings': ['RasberryPi','Microprocessor','Microcontroller'],
+		'ComputerNetworks': ['TCP','UDP','IP'],
+		'DataBaseManagementSystem' : ['DataBase','ManagementSystem','StructuredQueryLanguage','Transactions','QueryControl'],
+		'Blockchain' : ['Crytography','Public','Private','Ledger','Contracts'],
+		}
+
+		# return render_template('subdomain.html')
+
+		names=[]
+		imp_keywords = []
+		con = sqlite3.connect('chatbot.db')
+		cursorObj = con.cursor()
+		cursorObj.execute("SELECT keyword from domain_extraction where user_id='Raj'")
+		rows1 = cursorObj.fetchall()
+		cursorObj.close()
+		print("printing rowss--------------------------------------------")
+		for row in rows1:
+		    print(row)
+		    names.append(row[0])
+		for i in range(len(names)):
+		    imp_keywords = imp_keywords + str(names[i]).split('; ')
+
+		print("printing imp keywords--------------------------------------------")
+		print(imp_keywords)
+
+		dict4 = ['','nan']
+
+		final_imp_keywords = []
+		for i in imp_keywords:
+		    if(i not in dict4):
+		        final_imp_keywords.append(i)
+		print("printing final keywords-----------------------------------------")
+		print(final_imp_keywords)
+
+		nouns = []
+		for i in final_imp_keywords:
+		    if(i not in nouns):
+		        nouns.append(i)
+
+		# nouns = final_imp_keywords
+		imp_words = []
+		indexes = []
+		for word in nouns:
+		    imp_words.append(word.replace(" ", ""))
+
+
+		for i in range(len(imp_words)):
+		    for j in Dict:
+		        if(imp_words[i] in j.lower()):
+		            indexes.append([imp_words[i],j])
+		# finding the domains user is interested and taking their subdomains
+
+		user_subdomains = {}
+		for i in indexes:
+		    user_subdomains[i[1]] = Dict[i[1]]
+		print("printing user subdomins ------------------------------- before sending")
+		print(user_subdomains)
+
+		return render_template('subdomain.html',user_domains= user_subdomains)
+
+		user_subdomians_1 = request.form['sub_domains_user']
+		print("printing user subdomains ----------------------------------------")
+		print(user_subdomians_1)
+
+		return render_template('subdomain.html',user_domains= user_subdomains)
 
 
 
@@ -77,7 +162,7 @@ def subdomain():
 # 			con.commit()
 # 			cursorObj.close()
 
-# return render_template('index.html',user_input=ans,bot_response=qtn)			
+# return render_template('index.html',user_input=ans,bot_response=qtn)
 # 			ans = request.form['user_input']
 # 			answers.append(ans)
 # 			n_count=n_count+1
@@ -91,13 +176,13 @@ def process():
 	ans = request.form['user_input']
 	uid = request.form['uid']
 
-	
+
 	qtns1 = "Tell me about your recent project"
-	
+
 
 	ask_phrases = ['Tell me something more about ',
-               'Can you elaborate about your work in ', 
-               'This seems interesting... can you tell me more about ', 
+               'Can you elaborate about your work in ',
+               'This seems interesting... can you tell me more about ',
                'What did you do in ']
 
 
@@ -126,7 +211,7 @@ def process():
 	kw = ""
 	for i in nouns:
 		kw = kw + i + "; "
-	
+
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
 	cursorObj.execute("INSERT INTO domain_extraction (question, answer, keyword, user_id) VALUES (?,?,?,?)",(qtns1,ans,kw, uid))
@@ -144,7 +229,7 @@ def process():
 	for row in rows1:
 		print(row)
 		names.append(row[0])
-		
+
 
 	for i in range(len(names)):
 		imp_keywords = imp_keywords + str(names[i]).split('; ')
@@ -173,19 +258,19 @@ def process():
 	cursorObj.close()
 	qtn = ''
 	qtn = qtn + ask_phrases[random.randint(0,len(ask_phrases)-1)]
-	qtn = qtn + final_imp_keywords[value_count-1] 
+	qtn = qtn + final_imp_keywords[value_count-1]
 
 
 	return render_template('index.html',user_input=ans,bot_response=qtn,uid=uid)
 
-	
 
 
 
 
 
-		
-	
+
+
+
 
 	# user_input=request.form['user_input']
 
