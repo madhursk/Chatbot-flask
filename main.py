@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-# from chatterbot import ChatBot
-# from chatterbot.trainers import ListTrainer
 from flask_sqlalchemy import SQLAlchemy
 from flask import request
 import os
@@ -24,7 +22,7 @@ app = Flask(__name__)
 app.debug = True
 db = SQLAlchemy(app)
 
-unique_id = ''
+# unique_id = ''
 
 ask_phrases = ['Tell me something more about ','Can you elaborate about your work in ', 'This seems interesting... can you tell me more about ', 'What did you do in ']
 
@@ -40,7 +38,7 @@ def index():
 
 
 
-
+# to generate links
 @app.route('/link1',methods=['POST'])
 def applications():
 	applications = request.form['sub_apps_user']
@@ -310,12 +308,13 @@ def subdomain():
 
 	names=[]
 	imp_keywords = []
-	uid = request.form['uid']
+	# uid = request.form['uid']
 	# uid = unique_id
-	print(str(uid)+"\n\n")
+	# print(str(uid)+"\n\n")
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
+	# cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
+	cursorObj.execute("SELECT keyword from domain_extraction")
 	rows1 = cursorObj.fetchall()
 	cursorObj.close()
 	print("printing rowss--------------------------------------------")
@@ -412,12 +411,13 @@ def subdomain1():
 
 	names=[]
 	imp_keywords = []
-	uid = request.form['uid']
+	# uid = request.form['uid']
 	# uid = unique_id
-	print(str(uid)+"\n\n")
+	# print(str(uid)+"\n\n")
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
+	# cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
+	cursorObj.execute("SELECT keyword from domain_extraction")
 	rows1 = cursorObj.fetchall()
 	cursorObj.close()
 	print("printing rowss--------------------------------------------")
@@ -482,16 +482,6 @@ def subdomain1():
 
 @ app.route('/process', methods=['POST'])
 
-# con = sqlite3.connect('chatbot.db')
-# 			cursorObj = con.cursor()
-# 			cursorObj.execute("INSERT INTO domain_ext (question, answer, keyword) VALUES (?,?,?)",(qtns[0],ans,nouns[0]))
-# 			con.commit()
-# 			cursorObj.close()
-
-# return render_template('index.html',user_input=ans,bot_response=qtn)
-# 			ans = request.form['user_input']
-# 			answers.append(ans)
-# 			n_count=n_count+1
 
 def process():
 	# return render_template('index.html',bot_response="Tell me about your recent project")
@@ -500,8 +490,8 @@ def process():
 	cursorObj = con.cursor()
 
 	ans = request.form['user_input']
-	uid = request.form['uid']
-	unique_id=uid
+	# uid = request.form['uid']
+	# unique_id=uid
 
 	qtns1 = "Tell me about your recent project"
 
@@ -540,7 +530,7 @@ def process():
 
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("INSERT INTO domain_extraction (question, answer, keyword, user_id) VALUES (?,?,?,?)",(qtns1,ans,kw, uid))
+	cursorObj.execute("INSERT INTO domain_extraction (question, answer, keyword) VALUES (?,?,?)",(qtns1,ans,kw))
 	con.commit()
 	cursorObj.close()
 
@@ -548,7 +538,7 @@ def process():
 	imp_keywords = []
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT keyword from domain_extraction where user_id=\""+uid+"\"")
+	cursorObj.execute("SELECT keyword from domain_extraction")
 	rows1 = cursorObj.fetchall()
 	cursorObj.close()
 	print("printing rowss")
@@ -575,7 +565,7 @@ def process():
 	print(final_imp_keywords)
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT COUNT(uid) FROM domain_extraction where user_id=\""+uid+"\"")
+	cursorObj.execute("SELECT COUNT(uid) FROM domain_extraction")
 	key_count = cursorObj.fetchall()
 	print("keycountzzz")
 	value_count = int(key_count[0][0])
@@ -590,7 +580,7 @@ def process():
 		qtn='Tell me more details about your project'
 
 
-	return render_template('index.html',user_input=ans,bot_response=qtn,uid=uid)
+	return render_template('index.html',user_input=ans,bot_response=qtn)
 
 
 
