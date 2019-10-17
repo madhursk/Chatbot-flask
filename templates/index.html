@@ -45,13 +45,14 @@ User: {{user_input}}
 <script>
 document.getElementById("uid").innerHTML = {{uid}};
 </script>
-<form action="/subdomain" method="post">
+<form action="/subdomain1" method="post">
+	<input type="text" name="uid">
   <button name="forwardBtn" type="submit">Search for subdomain</button>
 </form>
 
 <form action="/applications" method="post">
   <button name="forwardBtn" type="submit">Search for applications</button>
-</form> 
+</form>
 
 
 </body>

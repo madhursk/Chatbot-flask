@@ -7,9 +7,28 @@
 <h1 align="center">User Subdomains Identification</h1>
 
 <script>
-    var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
-</script>
+    // var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
+    var take_baba = '{{user_domains}}';
+    // for(y of take_baba){
+    //
+    //     console.log(y);
+    // }
+    console.log(take_baba);
+    var splitted = take_baba.split(';');
+    console.log(splitted);
+    splitted.pop();
+    console.log(splitted);
+    var final1 = []
+    for (x of splitted){
+      var y = x.split(',');
+      console.log(y);
+      final1.push(y);
+    }
+    console.log(final1);
+    var domains = final1;
 
+</script>
+{{user_domains}}
 <form onsubmit="return false" method="POST" action="/subdomain">
 <table align="center" width="100%" border="0">
 
@@ -37,7 +56,7 @@
     </script>
 
 
-    <input type='text' name = 'sub_domains_user' id='id1' > 
+    <!-- <input type='text' name = 'sub_domains_user' id='id1' > -->
     <!--
 <input type='text' name = 'uid' id='uid1' />
     -->
@@ -77,10 +96,11 @@
                     c= c+1;
                 }
             domain_final.push(sub_domain);
+            domain_final.push(";");
     }
 
     console.log(domain_final);
-    document.getElementById("id1").value =domain_final;
+    document.getElementById("sub_domains_user").value =domain_final;
     }
 
 
@@ -88,15 +108,14 @@
 
 
 
-<!--
-<form  action="/process" method="POST">
+
+<form  action="/application1" method="POST">
   <div class="form-group">
-    User Name : <input type="text" name="uid" id = "uid" class="form-control" placeholder="{{uid}}"><br>
-    <label for="exampleInputEmail1">Friend Chatbot</label>
-    <input type="text" name="user_input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Talk to my friend"><br>
+    User name<input type="text" name="uid">
+    Subdomains<input type="text" name="sub_domains_user" id="sub_domains_user">
   <button type="submit" class="btn btn-primary">Send</button>
-  <p id="uid_demo"></p>
-  -->
+  <!-- <p id="uid_demo"></p> -->
+<!-- <p>{{user_domains}}</p> -->
 
 
 </form>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<h1 align="center">Displaying Final Links</h1>
+
+<script>
+    // var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
+    var nfl = '{{links}}';
+    // for(y of take_baba){
+    //
+    //     console.log(y);
+    // }
+    console.log(nfl);
+    var splitted = nfl.split(';');
+    console.log(splitted);
+    splitted.pop();
+    console.log(splitted);
+
+    // var domains = splitted;
+
+</script>
+
+<table>
+  <tr><td><h3>Links</h3></td></tr>
+  <script>
+    for (x of splitted){
+      document.write("<tr><td><a href = \""+x+"\" target=\"_blank\">"+x+"</a></td></tr>");
+    }
+  </script>
+</table>
+
+
+</body>
+</html>

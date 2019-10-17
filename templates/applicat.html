@@ -1,10 +1,124 @@
-This is output
-<form  action="/applications" method="POST">
-<div class="form-group">
-  User Name : <input type="text" name="uid" id = "uid" class="form-control" ><br>
-  <label for="exampleInputEmail1">Friend Chatbot</label>
-  <input type="text" name="user_applications" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Talk to my friend"><br>
-<button type="submit" class="btn btn-primary">Send</button>
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<h1 align="center">User Applications Identification</h1>
+
+<script>
+    // var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
+    var take_baba = '{{applications_list}}';
+    // for(y of take_baba){
+    //
+    //     console.log(y);
+    // }
+    console.log(take_baba);
+    var splitted = take_baba.split(';');
+    console.log(splitted);
+    splitted.pop();
+    console.log(splitted);
+    var final1 = []
+    for (x of splitted){
+      var y = x.split(',');
+      console.log(y);
+      final1.push(y);
+    }
+    console.log(final1);
+    var domains = final1;
+
+</script>
+{{user_domains}}
+<form onsubmit="return false" method="POST" action="/subdomain">
+<table align="center" width="100%" border="0">
+
+<script>
+    for (x of domains) {
+        var count = 0;
+        document.write("<tr>")
+            for(y of x)
+            {
+                if(count == 0)
+                {
+                    document.write("<td align=\"center\" padding-left=\"20px\"><h3>" +y + "</h3></td>");
+                }
+                if(count != 0)
+                {
+                    document.write("<td align=\"center\" ><input type=\"checkbox\"  id=\""+y+"\" name=\""+y+"\" >"+y +"</td>");
+                }
+                count  = count + 1;
+            }
+        document.write("</tr>")
+    }
+
+
+    document.write("</table>")
+    </script>
+
+
+    <!-- <input type='text' name = 'sub_domains_user' id='id1' > -->
+    <!--
+<input type='text' name = 'uid' id='uid1' />
+    -->
+
+    <script>
+    //<button onclick="myFunction()">Click me</button>
+    //document.write("<input type=\"submit\" value=\"Submit\">");
+    document.write("<br>" + "<br><p align=\"center\">")
+    document.write("<button   type=\"submit\" onclick=\"submitform()\">Submit</button></p>");
+
+    document.write("</form>");
+
+    function submitform()
+        {
+        console.log("In submit form");
+        //console.log(domains);
+        var domain_final = [];
+        for (x of domains)
+        {
+            var c = 0;
+            var sub_domain = [];
+            sub_domain.push(x[0]);
+            for(y of x)
+                {
+                    if(c!=0)
+                    {
+                        var value = document.getElementById(y);
+                        if(value.checked == true)
+                        {
+                            sub_domain.push(1);
+                        }
+                        else
+                        {
+                            sub_domain.push(0);
+                        }
+                    }
+                    c= c+1;
+                }
+            domain_final.push(sub_domain);
+            domain_final.push(";");
+    }
+
+    console.log(domain_final);
+    document.getElementById("sub_apps_user").value =domain_final;
+    }
+
+
+</script>
+
+
+
+
+<form  action="/link1" method="POST">
+  <div class="form-group">
+    User name<input type="text" name="uid">
+    Applications<input type="text" name="sub_apps_user" id="sub_apps_user">
+  <button type="submit" class="btn btn-primary">Send</button>
+  <!-- <p id="uid_demo"></p> -->
+<!-- <p>{{user_domains}}</p> -->
+
 
 </form>
-</div>
+</p>
+</body>
+</html>
