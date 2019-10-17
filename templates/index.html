@@ -22,9 +22,16 @@ User: {{user_input}}
     <label for="exampleInputEmail1">Friend Chatbot</label>
     <input type="text" name="user_input" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Talk to my friend"><br>
   <button type="submit" class="btn btn-primary">Send</button>
-  <button type="submit" class="btn btn-primary">Search For Subdomains</button>
+  
 
 </form>
 </div>
+
+
+<form action="/subdomain" method="post">
+  <button name="forwardBtn" type="submit">Search for subdomain</button>
+</form> 
+
+
 </body>
 </html>
