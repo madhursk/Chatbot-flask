@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Final Links</title>
+  <style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
 
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even){background-color: #f2f2f2}
+
+  th {
+    background-color: #2196F3;
+    color: white;
+  }
+  </style>
 </head>
 <body>
-<h1 align="center">Displaying Final Links</h1>
+<h1 align="center" >Displaying Final Links</h1>
+<br>
+<br>
 
 <script>
     // var domains = [['MachineLearning','Regression','Prediction','MultipleLinearRegression'],['CloudComputing','CC1','CC2'],['IOT','iot1','iot2'   ] ];
@@ -17,17 +37,22 @@
     var splitted = nfl.split(';');
     console.log(splitted);
     splitted.pop();
-    console.log(splitted);
+    var more_splitted = []
+    for (x of splitted){
+      more_splitted.push(x.split('¬'))
+    }
+    // var more_splitted = splitted.split(':')
+    console.log(more_splitted);
 
     // var domains = splitted;
 
 </script>
 
 <table>
-  <tr><td><h3>Links</h3></td></tr>
+  <tr><th>Titles</th><th>Links</th></tr>
   <script>
-    for (x of splitted){
-      document.write("<tr><td><a href = \""+x+"\" target=\"_blank\">"+x+"</a></td></tr>");
+    for (x of more_splitted){
+      document.write("<tr><td>"+x[1]+"</td><td><a href = \""+x[0]+"\" target=\"_blank\">"+x[0]+"</a></td></tr>");
     }
   </script>
 </table>

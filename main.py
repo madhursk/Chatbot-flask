@@ -116,6 +116,40 @@ def applications():
 		nsuperfinal_keywords.append(row[0])
 	print(nsuperfinal_keywords)
 
+
+	# taking the keywords from the initial list as well
+	names=[]
+	imp_keywords = []
+	con = sqlite3.connect('chatbot.db')
+	cursorObj = con.cursor()
+	cursorObj.execute("SELECT keyword from domain_extraction")
+	rows1 = cursorObj.fetchall()
+	cursorObj.close()
+	print("printing rowss")
+	for row in rows1:
+		print(row)
+		names.append(row[0])
+
+
+	for i in range(len(names)):
+		imp_keywords = imp_keywords + str(names[i]).split('; ')
+
+
+	print("printing imp keywords")
+	print(imp_keywords)
+
+
+	dict4 = ['','nan']
+	final_imp_keywords = []
+	for i in imp_keywords:
+		if(i not in dict4):
+			final_imp_keywords.append(i)
+			nsuperfinal_keywords.append(i)
+
+	print("printing final keywords")
+	print(final_imp_keywords)
+
+
 	superfinal_keywords = []
 	for i in nsuperfinal_keywords:
 		if(i not in superfinal_keywords):
@@ -197,7 +231,7 @@ def applications():
 	sending_links = ""
 	for key,value in sorted_d:
 		print(links[key])
-		sending_links = sending_links + links[key] + ";"
+		sending_links = sending_links + links[key] + "¬" + key + ";"
 
 	# Clearing the database
 	con = sqlite3.connect('chatbot.db')
@@ -382,7 +416,12 @@ def subdomain():
 
 
 
-
+def check_in_dict(value, listx):
+	# ret_val = False
+	for i in listx:
+		if(value.lower() == i.lower()):
+			return True
+	return False
 
 
 
@@ -453,7 +492,7 @@ def subdomain1():
 
 	for i in range(len(imp_words)):
 	    for j in Dict:
-	        if(imp_words[i] in j.lower()):
+	        if(imp_words[i].lower() in j.lower() or check_in_dict(imp_words[i],Dict[j])):
 	            indexes.append([imp_words[i],j])
 	# finding the domains user is interested and taking their subdomains
 
@@ -499,7 +538,11 @@ def process():
 	ask_phrases = ['Tell me something more about ',
                'Can you elaborate about your work in ',
                'This seems interesting... can you tell me more about ',
-               'What did you do in ']
+               'What did you do in ',
+			   'What more topics did you do besides ',
+			   'Any other topics you used in your project besides ',
+			   'What other topics excite you apart from ',
+			   'What applications are you interested in related to topic ']
 
 
 	count = 0
@@ -565,7 +608,7 @@ def process():
 	print(final_imp_keywords)
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT COUNT(uid) FROM domain_extraction")
+	cursorObj.execute("SELECT COUNT(question) FROM domain_extraction")
 	key_count = cursorObj.fetchall()
 	print("keycountzzz")
 	value_count = int(key_count[0][0])
