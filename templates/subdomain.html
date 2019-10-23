@@ -115,30 +115,20 @@
             {
                 if(count == 0)
                 {
-                    document.write("<div class=\"col-sm-3\"><h3>" +y + "</h3></div>");
+                    document.write("<div class=\"col-sm-3\"><h3>" +y + "</h3></div><div class=\"col-sm-9\"><div class=\"row\">");
                 }
+
                 if(count != 0)
                 {
-                    document.write("<div class=\"col-sm-3\"><label class=\"container\">"+y+"<input type=\"checkbox\"  id=\""+y+"\" name=\""+y+"\" ><span class=\"checkmark\"></span></label></div>");
+                    document.write("<div class=\"col-sm-3\" style=\"padding:5px;padding-bottom:9px;\"><label class=\"container\">"+y+"<input type=\"checkbox\"  id=\""+y+"\" name=\""+y+"\" ><span class=\"checkmark\"></span></label><input type=\"number\" name=\"quantity\" min=\"1\" max=\"5\" id=\""+y+"_pr\" name=\""+y+"_pr\" value=\"3\"></div>");
                 }
                 count  = count + 1;
             }
-        document.write("</div><br><br>")
+        document.write("</div></div></div><hr><br>")
     }
 
 
     document.write("</div>")
-    </script>
-
-
-    <!-- <input type='text' name = 'sub_domains_user' id='id1' > -->
-    <!--
-<input type='text' name = 'uid' id='uid1' />
-    -->
-
-    <script>
-    //<button onclick="myFunction()">Click me</button>
-    //document.write("<input type=\"submit\" value=\"Submit\">");
     document.write("<br><p align=\"center\">")
     document.write("<button   type=\"submit\" onclick=\"submitform()\">Submit</button></p>");
 
@@ -149,10 +139,13 @@
         console.log("In submit form");
         //console.log(domains);
         var domain_final = [];
+        var sub_priority = [];
         for (x of domains)
         {
             var c = 0;
             var sub_domain = [];
+            var sub_pr = [];
+            sub_pr.push(x[0]);
             sub_domain.push(x[0]);
             for(y of x)
                 {
@@ -167,15 +160,26 @@
                         {
                             sub_domain.push(0);
                         }
+                        var x = y;
+                        x = x.concat("_pr");
+                        console.log(x)
+                        var pr_value = document.getElementById(x);
+                        console.log(pr_value.value);
+                        sub_pr.push(pr_value.value);
                     }
+
                     c= c+1;
                 }
             domain_final.push(sub_domain);
+            sub_priority.push(sub_pr);
+            sub_priority.push(";");
             domain_final.push(";");
     }
 
     console.log(domain_final);
+    console.log(sub_priority);
     document.getElementById("sub_domains_user").value =domain_final;
+    document.getElementById("sub_priority_user").value =sub_priority;
     document.forms['subform'].submit();
     }
 
@@ -189,6 +193,7 @@
   <div class="form-group">
     <!-- User name<input type="text" name="uid"> -->
     Subdomains<input type="text" name="sub_domains_user" id="sub_domains_user">
+    Subpriority<input type="text" name="sub_priority_user" id="sub_priority_user">
   <button type="submit" class="btn btn-primary">Send</button>
   <!-- <p id="uid_demo"></p> -->
 <!-- <p>{{user_domains}}</p> -->
@@ -196,6 +201,5 @@
 
 </form>
 </div>
-<!-- </p> -->
 </body>
 </html>

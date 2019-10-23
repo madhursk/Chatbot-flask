@@ -14,6 +14,7 @@ import operator
 from lxml import html
 from googlesearch import search
 from bs4 import BeautifulSoup
+import re
 
 
 app = Flask(__name__)
@@ -42,36 +43,56 @@ def index():
 @app.route('/link1',methods=['POST'])
 def applications():
 	applications = request.form['sub_apps_user']
+	app_priority = request.form['app_priority_user']
 	# print("----------------------Applications-------------------------------")
 	print(applications)
 
-	Dict1 = {'MachineLearning': ['Predictions','Recommenadations','WebSearchEngine','Detection','Analytics'],
-	'ArtificialIntelligence': ['Recognition', 'Detection', 'Recomendation','Prediction', 'ArtificialGeneralIntelligence','Analytics'],
-	'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','AnomalyDetection'],
-	'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
-	'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
-	'CloudComputing': ['Applications', 'Storing','Processing'],
-	'BigData': ['Storage','Processing'],
-	'DataAnalytics': ['Analytics','Processing','Visualtization'],
-	'InternetOfThings': ['Automations','SmartHomes','Wearables'],
-	'ComputerNetworks': ['TransferProtocol','Communications'],
-	'DataBaseManagementSystem' : ['ManagementSystem','StorageManagement','RecoveryManagement','SecurityManagement'],
-	'Blockchain' : ['Crytography','CryptoCurrency','Security','Tokenization'],
+	Dict1 = {'MachineLearning': ['StockPredictions','ProductRecommendations','WebSearchEngine','FraudDetection','Analytics'],
+	'ArtificialIntelligence': ['AutomatedCustomerSupport', 'Healthcare', 'SmartCars','SmartHomeDevices', 'ArtificialGeneralIntelligence'],
+	'DeepLearning': ['ImageRecognition','FraudDetection','SpeechRecognition','AnomalyDetection', 'FaceDetection'],
+	'ComputerVision': ['FaceDetection', 'TerrainDetection','MotionAnalysis','ImageRestoration','ImageProcessing'],
+	'DigitalImageProcessing': ['ImageRestoration','PatternRecognition','PatternRecognition','LinearFiltering','RemoteSensing'],
+	'CloudComputing': ['BigDataAnalytics', 'StoringPurpose','ProcessingPurpose','TestAndDevelopment','E-CommerceSoftware'],
+	'BigData': ['StoragePurpose','ProcessingPurpose', 'WeatherForecasting', 'TrafficOptimization', 'AnalyticsProcessing'],
+	'DataAnalytics': ['AnalyticsProcessing','DataProcessing','DataVisualtization', 'EnergyManagement', 'Gaming'],
+	'InternetOfThings': ['Automations','SmartHomes','SmartWearables', 'ConnectedCars', 'SmartCities'],
+	'ComputerNetworks': ['TransferProtocol','CommunicationsMedium','FileTransfer','TrafficControl', 'HybridComputing'],
+	'DataBaseManagementSystem' : ['ECommerceManagementSystem', 'StoreManagementSystem','StorageManagement','RecoveryManagement','SecurityManagement'],
+	'Blockchain' : ['SmartAppliances','CryptoCurrency','FraudDetection','Tokenization','PersonalIdentification'],
 	}
 
 
 	print("========================Printing applications")
+
+
 	print(applications)
+
+
 	list_x = applications.split(";")[:-1]
+	list_y = app_priority.split(";")[:-1]
+
 	dict_domains_nfinal = []
+	dict_domains_pr_nfinal = []
 	for substrings in list_x:
 		dict_domains_nfinal.append(substrings.split(",")[:-1])
+
+	for substrings in list_y:
+		dict_domains_pr_nfinal.append(substrings.split(",")[:-1])
+
 	print(dict_domains_nfinal)
+	print(dict_domains_pr_nfinal)
+
 	for i in range(1,len(dict_domains_nfinal)):
 		semi_list = dict_domains_nfinal[i]
 		semi_list = semi_list[1:]
 		dict_domains_nfinal[i]=semi_list
 	print(dict_domains_nfinal)
+
+	for i in range(1,len(dict_domains_pr_nfinal)):
+		semi_list = dict_domains_pr_nfinal[i]
+		semi_list = semi_list[1:]
+		dict_domains_pr_nfinal[i]=semi_list
+	print(dict_domains_pr_nfinal)
 
 	# array form of user choice
 	final_dict = {}
@@ -82,20 +103,28 @@ def applications():
 		final_dict[i[0]] = list_z
 	print(final_dict)
 
+	final_pr_dict = {}
+	for i in dict_domains_pr_nfinal:
+		list_z = []
+		for z in range(1,len(i)):
+			list_z.append(int(i[z]))
+		final_pr_dict[i[0]] = list_z
+	print(final_pr_dict)
+
 
 	super_final_array = []
 	for i in final_dict:
 		x = Dict1[i]
-		super_final_array.append(i)
+		super_final_array.append([i,5])
 		for y in range(len(x)):
 			if(final_dict[i][y] == 1):
-				super_final_array.append(x[y])
+				super_final_array.append([x[y],final_pr_dict[i][y]])
 	print(super_final_array)
 
 	for i in super_final_array:
 			con = sqlite3.connect('chatbot.db')
 			cursorObj = con.cursor()
-			cursorObj.execute("INSERT INTO keywords (keyword) VALUES (\""+i+"\")")
+			cursorObj.execute("INSERT INTO keywords (keyword,priority) VALUES (\""+i[0]+"\",\""+str(i[1])+"\")")
 			con.commit()
 			cursorObj.close()
 
@@ -103,7 +132,7 @@ def applications():
 	# Now the applications are inserted into the table
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
-	cursorObj.execute("SELECT keyword FROM keywords")
+	cursorObj.execute("SELECT keyword,priority FROM keywords")
 	con.commit()
 	#cursorObj.close()
 
@@ -113,7 +142,7 @@ def applications():
 	nsuperfinal_keywords = []
 	for row in rows1:
 	    # print(row)
-		nsuperfinal_keywords.append(row[0])
+		nsuperfinal_keywords.append([row[0],int(row[1])])
 	print(nsuperfinal_keywords)
 
 
@@ -144,36 +173,39 @@ def applications():
 	for i in imp_keywords:
 		if(i not in dict4):
 			final_imp_keywords.append(i)
-			nsuperfinal_keywords.append(i)
+			nsuperfinal_keywords.append([i,10])
 
 	print("printing final keywords")
 	print(final_imp_keywords)
 
-
+	extra = []
 	superfinal_keywords = []
 	for i in nsuperfinal_keywords:
-		if(i not in superfinal_keywords):
-			superfinal_keywords.append(i)
+		if(str(re.sub("([a-z])([A-Z])","\g<1> \g<2>",i[0])).lower() not in extra):
+			superfinal_keywords.append([re.sub("([a-z])([A-Z])","\g<1> \g<2>",i[0]).lower(),i[1]])
+			extra.append(re.sub("([a-z])([A-Z])","\g<1> \g<2>",i[0]).lower())
 
 	print(superfinal_keywords)
+	print("printing extra  : \n"+str(extra)+"\n\n")
 
 	keywords = superfinal_keywords
 	q1 = ''
 	for i in keywords:
-	    q1 = q1 + ' + ' + i
+	    q1 = q1 + ' + ' + i[0]
 	# print(q1)
 	query = q1[3:]
+
+	# query = "IEEE xplore + ieee " + query
 	print(query)
-	query = "IEEE + xplore + ieee + research " + query
 	fallback = 'Sorry, The title didnt exist for this page.'
 	result = ''
 	titles = []
 	page_content=[]
 	# index = 0
-	search_result_list = list(search(query, tld="co.in", num=10, stop=10, pause=1))
+	search_result_list = list(search(query, tld="co.in", num=7, stop=7, pause=1))
 	print(search_result_list)
 
-	for index in range(0,10):
+	for index in range(0,7):
 		result=''
 		flag=0
 		try:
@@ -203,38 +235,48 @@ def applications():
 		        result = first_sentence
 		    if(str(result)!="403 Forbidden"):
 		        titles.append(result)
-		    # else:
-		        # result = fallback
+		    else:
+		        result = fallback
 			#if (str(result) != "403 Forbidden"):
 			# 	titles.append(result)
 		except:
 			flag=1
-		    # if len(result) == 0: result = fallback
+		     #if (len(result) == 0):
+		       # result = fallback
 		    # print(result)
-			#
-		    # print(titles)
+
+		     #print(titles)
 			# continue
 		#if flag == 1:
 			#continue
 		#titles.append(result)
+	print("printing titles==========================>>>>>>>>>>>>>>>>>>>>>=================")
+	print(titles)
+	print("\n\n\n")
 	weights = []
 	priority = []
-	for i in range(len(superfinal_keywords)):
-	    priority.append(random.randint(0,3))
+	for i in superfinal_keywords:
+	    priority.append(i[1])
 		#priority.append(1)
 	for i in page_content:
 	    list1 = []
 	    for j in range(0,len(superfinal_keywords)):
-	        count_word = str(i).count(str(superfinal_keywords[j]))
-	        list1.append(count_word*priority[j])
+	        count_word = str(i).count(str(superfinal_keywords[j][0]))
+	        list1.append(count_word*superfinal_keywords[j][1])
 	    weights.append(list1)
 	print(weights)
 
 	score = {}
 	links = {}
-	for i in range(len(weights)):
-	    score[titles[i]]=sum(weights[i])
-	    links[titles[i]]=search_result_list[i]
+	counter = 0
+	for i in titles:
+		if(i != ''):
+		    score[i]=sum(weights[counter])
+		    links[i]=search_result_list[counter]
+		else:
+		    score[str(counter)]=sum(weights[counter])
+		    links[str(counter)]=search_result_list[counter]
+		counter= counter+1
 
 	sorted_d = sorted(score.items(), key=operator.itemgetter(1))
 	sorted_d.reverse()
@@ -278,7 +320,7 @@ def applications():
 @app.route('/application1', methods=['POST','GET'])
 def subdomain():
 	Dict = {'MachineLearning': ['LinearRegression','LogisticRegression','KNN','SupervisedLearning','UnSupervisedLearning','NaiveBayes'],
-	'ArtificialIntelligence': ['KnowledgeReasoning', 'Planning', 'MachineLearning','NaturalLanguageProcessing', 'ComputerVision', 'Robotics', 'ArtificialGeneralIntelligence'],
+	'ArtificialIntelligence': ['KnowledgeReasoning', 'Planning', 'NaturalLanguageProcessing', 'ComputerVision', 'Robotics', 'ArtificialGeneralIntelligence'],
 	'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','SupervisedLearning','NeuralNetworks','AnomalyDetection'],
 	'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
 	'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
@@ -295,16 +337,36 @@ def subdomain():
 	subdomains_user = request.form['sub_domains_user']
 	print("========================Printing subdomians")
 	print(subdomains_user)
+	subpriority_user = request.form['sub_priority_user']
+	print("========================Printing subpriorities")
+	print(subpriority_user)
+
+
 	list_x = subdomains_user.split(";")[:-1]
+	list_y = subpriority_user.split(";")[:-1]
+
 	dict_domains_nfinal = []
+	dict_domains_pr_nfinal = []
 	for substrings in list_x:
 		dict_domains_nfinal.append(substrings.split(",")[:-1])
+
+	for substrings in list_y:
+		dict_domains_pr_nfinal.append(substrings.split(",")[:-1])
+
 	print(dict_domains_nfinal)
+	print(dict_domains_pr_nfinal)
+
 	for i in range(1,len(dict_domains_nfinal)):
 		semi_list = dict_domains_nfinal[i]
 		semi_list = semi_list[1:]
 		dict_domains_nfinal[i]=semi_list
 	print(dict_domains_nfinal)
+
+	for i in range(1,len(dict_domains_pr_nfinal)):
+		semi_list = dict_domains_pr_nfinal[i]
+		semi_list = semi_list[1:]
+		dict_domains_pr_nfinal[i]=semi_list
+	print(dict_domains_pr_nfinal)
 
 	# array form of user choice
 	final_dict = {}
@@ -315,20 +377,28 @@ def subdomain():
 		final_dict[i[0]] = list_z
 	print(final_dict)
 
+	final_pr_dict = {}
+	for i in dict_domains_pr_nfinal:
+		list_z = []
+		for z in range(1,len(i)):
+			list_z.append(int(i[z]))
+		final_pr_dict[i[0]] = list_z
+	print(final_pr_dict)
+
 
 	super_final_array = []
 	for i in final_dict:
 		x = Dict[i]
-		super_final_array.append(i)
+		super_final_array.append([i,5])
 		for y in range(len(x)):
 			if(final_dict[i][y] == 1):
-				super_final_array.append(x[y])
+				super_final_array.append([x[y],final_pr_dict[i][y]])
 	print(super_final_array)
 
 	for i in super_final_array:
 			con = sqlite3.connect('chatbot.db')
 			cursorObj = con.cursor()
-			cursorObj.execute("INSERT INTO keywords (keyword) VALUES (\""+i+"\")")
+			cursorObj.execute("INSERT INTO keywords (keyword,priority) VALUES (\""+i[0]+"\",\""+str(i[1])+"\")")
 			con.commit()
 			cursorObj.close()
 
@@ -337,18 +407,31 @@ def subdomain():
 	# we are forming and applications dictionary to send to applications.html
 
 	# Dictionary for applications addition to the chatbot
-	Dict1 = {'MachineLearning': ['Predictions','Recommenadations','WebSearchEngine','Detection','Analytics'],
-	'ArtificialIntelligence': ['Recognition', 'Detection', 'Recomendation','Prediction', 'ArtificialGeneralIntelligence','Analytics'],
-	'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','AnomalyDetection'],
-	'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
-	'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
-	'CloudComputing': ['Applications', 'Storing','Processing'],
-	'BigData': ['Storage','Processing'],
-	'DataAnalytics': ['Analytics','Processing','Visualtization'],
-	'InternetOfThings': ['Automations','SmartHomes','Wearables'],
-	'ComputerNetworks': ['TransferProtocol','Communications'],
-	'DataBaseManagementSystem' : ['ManagementSystem','StorageManagement','RecoveryManagement','SecurityManagement'],
-	'Blockchain' : ['Crytography','CryptoCurrency','Security','Tokenization'],
+	# Dict1 = {'MachineLearning': ['Predictions','Recommenadations','WebSearchEngine','Detection','Analytics'],
+	# 'ArtificialIntelligence': ['Recognition', 'Detection', 'Recomendation','Prediction', 'ArtificialGeneralIntelligence','Analytics'],
+	# 'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','AnomalyDetection'],
+	# 'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
+	# 'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
+	# 'CloudComputing': ['Applications', 'Storing','Processing'],
+	# 'BigData': ['Storage','Processing'],
+	# 'DataAnalytics': ['Analytics','Processing','Visualtization'],
+	# 'InternetOfThings': ['Automations','SmartHomes','Wearables'],
+	# 'ComputerNetworks': ['TransferProtocol','Communications'],
+	# 'DataBaseManagementSystem' : ['ManagementSystem','StorageManagement','RecoveryManagement','SecurityManagement'],
+	# 'Blockchain' : ['Crytography','CryptoCurrency','Security','Tokenization'],
+	# }
+	Dict1 = {'MachineLearning': ['StockPredictions','ProductRecommendations','WebSearchEngine','FraudDetection','Analytics'],
+	'ArtificialIntelligence': ['AutomatedCustomerSupport', 'Healthcare', 'SmartCars','SmartHomeDevices', 'ArtificialGeneralIntelligence'],
+	'DeepLearning': ['ImageRecognition','FraudDetection','SpeechRecognition','AnomalyDetection', 'FaceDetection'],
+	'ComputerVision': ['FaceDetection', 'TerrainDetection','MotionAnalysis','ImageRestoration','ImageProcessing'],
+	'DigitalImageProcessing': ['ImageRestoration','PatternRecognition','PatternRecognition','LinearFiltering','RemoteSensing'],
+	'CloudComputing': ['BigDataAnalytics', 'StoringPurpose','ProcessingPurpose','TestAndDevelopment','E-CommerceSoftware'],
+	'BigData': ['StoragePurpose','ProcessingPurpose', 'WeatherForecasting', 'TrafficOptimization', 'AnalyticsProcessing'],
+	'DataAnalytics': ['AnalyticsProcessing','DataProcessing','DataVisualtization', 'EnergyManagement', 'Gaming'],
+	'InternetOfThings': ['Automations','SmartHomes','SmartWearables', 'ConnectedCars', 'SmartCities'],
+	'ComputerNetworks': ['TransferProtocol','CommunicationsMedium','FileTransfer','TrafficControl', 'HybridComputing'],
+	'DataBaseManagementSystem' : ['ECommerceManagementSystem', 'StoreManagementSystem','StorageManagement','RecoveryManagement','SecurityManagement'],
+	'Blockchain' : ['SmartAppliances','CryptoCurrency','FraudDetection','Tokenization','PersonalIdentification'],
 	}
 
 
@@ -445,7 +528,7 @@ def subdomain1():
 
 	# if request.method == 'POST':
 	Dict = {'MachineLearning': ['LinearRegression','LogisticRegression','KNN','SupervisedLearning','UnSupervisedLearning','NaiveBayes'],
-	'ArtificialIntelligence': ['KnowledgeReasoning', 'Planning', 'MachineLearning','NaturalLanguageProcessing', 'ComputerVision', 'Robotics', 'ArtificialGeneralIntelligence'],
+	'ArtificialIntelligence': ['KnowledgeReasoning', 'Planning','NaturalLanguageProcessing', 'ComputerVision', 'Robotics', 'ArtificialGeneralIntelligence'],
 	'DeepLearning': ['ImageRecognition','FraudDetection','RecommendationSystem','SupervisedLearning','NeuralNetworks','AnomalyDetection'],
 	'ComputerVision': ['Recognition','MotionAnalysis','ImageRestoration','ImageProcessing'],
 	'DigitalImageProcessing': ['ImageRestoration','Classification','PatternRecognition','LinearFiltering','Projection'],
