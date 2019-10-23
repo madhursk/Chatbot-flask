@@ -165,59 +165,70 @@ def applications():
 	query = q1[3:]
 	print(query)
 	query = "IEEE + xplore + ieee + research " + query
-	fallback = 'Sorry, I cannot think of a reply for that.'
+	fallback = 'Sorry, The title didnt exist for this page.'
 	result = ''
 	titles = []
+	page_content=[]
 	# index = 0
-	search_result_list = list(search(query, tld="co.in", num=7, stop=7, pause=1))
+	search_result_list = list(search(query, tld="co.in", num=10, stop=10, pause=1))
 	print(search_result_list)
-	for index in range(0,7):
-	    try:
-	#         print(1)
-	        page = requests.get(search_result_list[index])
-	        print(search_result_list[index])
-	    #     print(page)
-	        tree = html.fromstring(page.content)
 
-	        soup = BeautifulSoup(page.content, features="lxml")
-	    #     print(soup)
-	        article_text = ''
-	        article = soup.findAll('title')
-	        for element in article:
-	            article_text += '\n' + ''.join(element.findAll(text = True))
-	        article_text = article_text.replace('\n', '')
-	        first_sentence = article_text.split('.')
-	        first_sentence = first_sentence[0].split('?')[0]
-	#         first_sentence = article
-	        print(first_sentence)
-	        chars_without_whitespace = first_sentence.translate(
-	            { ord(c): None for c in string.whitespace }
-	        )
+	for index in range(0,10):
+		result=''
+		flag=0
+		try:
+		#         print(1)
+		    page = requests.get(search_result_list[index])
+		    print(search_result_list[index])
+		#     print(page)
+		    tree = html.fromstring(page.content)
 
-	        if len(chars_without_whitespace) > 0:
-	            result = first_sentence
-	        else:
-	            result = fallback
+		    soup = BeautifulSoup(page.content, features="lxml")
+		#     print(soup)
+		    article_text = ''
+		    page_content.append(soup)
+		    article = soup.findAll('title')
+		    for element in article:
+		        article_text += '\n' + ''.join(element.findAll(text = True))
+		    article_text = article_text.replace('\n', '')
+		    first_sentence = article_text.split('.')
+		    first_sentence = first_sentence[0].split('?')[0]
+		#         first_sentence = article
+		    print(first_sentence)
+		    chars_without_whitespace = first_sentence.translate(
+		        { ord(c): None for c in string.whitespace }
+		    )
 
-	        print(result)
-	        titles.append(result)
-	    except:
-	        if len(result) == 0: result = fallback
-	        print(result)
-
-	        print(titles)
-
+		    if len(chars_without_whitespace) > 0:
+		        result = first_sentence
+		    if(str(result)!="403 Forbidden"):
+		        titles.append(result)
+		    # else:
+		        # result = fallback
+			#if (str(result) != "403 Forbidden"):
+			# 	titles.append(result)
+		except:
+			flag=1
+		    # if len(result) == 0: result = fallback
+		    # print(result)
+			#
+		    # print(titles)
+			# continue
+		#if flag == 1:
+			#continue
+		#titles.append(result)
 	weights = []
 	priority = []
 	for i in range(len(superfinal_keywords)):
 	    priority.append(random.randint(0,3))
-	for i in titles:
+		#priority.append(1)
+	for i in page_content:
 	    list1 = []
 	    for j in range(0,len(superfinal_keywords)):
-	        count_word = i.count(superfinal_keywords[j])
+	        count_word = str(i).count(str(superfinal_keywords[j]))
 	        list1.append(count_word*priority[j])
 	    weights.append(list1)
-	weights
+	print(weights)
 
 	score = {}
 	links = {}
@@ -227,6 +238,7 @@ def applications():
 
 	sorted_d = sorted(score.items(), key=operator.itemgetter(1))
 	sorted_d.reverse()
+	print(sorted_d)
 
 	sending_links = ""
 	for key,value in sorted_d:
@@ -383,8 +395,8 @@ def subdomain():
 
 
 	for i in range(len(imp_words)):
-	    for j in Dict1:
-	        if(imp_words[i] in j.lower()):
+	    for j in Dict:
+	        if(imp_words[i].lower() in j.lower() or check_in_dict(imp_words[i],Dict[j])):
 	            indexes.append([imp_words[i],j])
 	# finding the domains user is interested and taking their subdomains
 
@@ -524,7 +536,7 @@ def subdomain1():
 
 def process():
 	# return render_template('index.html',bot_response="Tell me about your recent project")
-	dict3 = ['paper', 'project', 'data', 'nothing', 'no', 'I', 'major', 'analysis', 'use', 'learning']
+	dict3 = ['paper', 'project', 'data', 'nothing', 'no', 'I', 'major', 'analysis', 'use', 'learning', 'topic', 'topics', 'i', 'used']
 	con = sqlite3.connect('chatbot.db')
 	cursorObj = con.cursor()
 
@@ -532,7 +544,7 @@ def process():
 	# uid = request.form['uid']
 	# unique_id=uid
 
-	qtns1 = "Tell me about your recent project"
+	qtns1 = "Tell me what do you want to do in your recent project"
 
 
 	ask_phrases = ['Tell me something more about ',
